@@ -30,4 +30,22 @@ $(function () {
       }
     }
   })
+
+  // 注册功能 监听注册表单的提交事件
+  $('#form-reg').on('click', function (e) {
+    e.preventDefault()
+    $.post(
+      'http://ajax.frontend.itheima.net/api/reguser',
+      {
+        username: $('#form-reg [name=username]').val(),
+        password: $('#form-reg [name=username]').val()
+      },
+      function (res) {
+        if (res.status !== 0) {
+          return console.log('注册失败', res.message)
+        }
+        console.log('注册成功！')
+      }
+    )
+  })
 })
