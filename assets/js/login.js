@@ -17,8 +17,11 @@ $(function () {
   })
 
   // 自定义校验规则
-  const form = layui.form
+  // 从 layui 中获取 form 对象
+  var form = layui.form
+  var layer = layui.layer
   form.verify({
+    // 自定义了一个叫做 pwd 校验规则
     pwd: [/^[\S]{6,12}$/, '密码必须6到12位，且不能出现空格'],
     repwd: function (value) {
       // 通过形参拿到的是确认密码框中的内容
@@ -33,6 +36,7 @@ $(function () {
 
   // 注册功能 监听注册表单的提交事件
   $('#form-reg').on('click', function (e) {
+    // 阻止默认行为
     e.preventDefault()
     $.post(
       'http://ajax.frontend.itheima.net/api/reguser',
@@ -42,9 +46,11 @@ $(function () {
       },
       function (res) {
         if (res.status !== 0) {
-          return console.log('注册失败', res.message)
+          return layer.msg('注册失败', res.message)
         }
-        console.log('注册成功！')
+        layer.msg('注册成功，请登录！')
+        // 模拟人的点击行为
+        $('#link_login').click()
       }
     )
   })
