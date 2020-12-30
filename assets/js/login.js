@@ -49,9 +49,31 @@ $(function () {
           return layer.msg('注册失败', res.message)
         }
         layer.msg('注册成功，请登录！')
-        // 模拟人的点击行为
+        // 模拟人的点击行为 主动触发点击事件
         $('#link_login').click()
       }
     )
+  })
+
+  // 登录功能
+  $('#form-login').on('click', function (e) {
+    e.preventDefault()
+    console.log($(this).serialize())
+    $.ajax({
+      method: 'POST',
+      url: 'http://ajax.frontend.itheima.net/api/login',
+      data: $(this).serialize(),
+      success: function (res) {
+        if (res.status !== 0) {
+          return layer.msg('登录失败！')
+        }
+        layer.msg('登录成功！')
+        // 将登录成功得到的 token 字符串，保存到 localStorage 中
+        // console.log(res.token);
+        localStorage.setItem('token', res.token)
+        // 跳转到后台主页
+        location.href = '/index.html'
+      }
+    })
   })
 })
