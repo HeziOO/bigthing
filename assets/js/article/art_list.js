@@ -1,7 +1,7 @@
 $(function () {
   let layer = layui.layer
   let form = layui.form
-  var laypage = layui.laypage
+  let laypage = layui.laypage
 
   // 定义美化时间的过滤器
   template.defaults.imports.dataFormat = function (date) {
@@ -35,6 +35,7 @@ $(function () {
   initTable()
   initCate()
 
+  // 获取后台数据并渲染到页面
   function initTable() {
     $.ajax({
       method: 'GET',
@@ -126,4 +127,41 @@ $(function () {
       }
     })
   }
+
+  // 通过事件委托 为删除按钮绑定点击事件
+  $('tbody').on('click', '.btn-delete', function () {
+    // 获取所有删除按钮
+    let len = $('btn-delete').length
+    // 获取文章的 id
+    let id = $(this).attr('data-id')
+    // 询问用户是否要删除数据
+    layer.confirm(
+      '确定要删除吗?',
+      {
+        icon: 3,
+        title: '提示'
+      },
+      function (index) {
+        $.ajax({
+          method: 'GET',
+          url: '/my/article/delete/' + id,
+          success: function (res) {
+            if (res.status !== 0) {
+              return layer.msg('删除文章失败！')
+            }
+            layer.msg('删除文章成功！')
+            // 当数据删除完成后 需要判断当前这一页中 是否还有剩余的数据
+            // 如果没有剩余的数据了 就让页码值 -1之后 再重新调用 initTable 方法
+
+            if (len === 1) {
+              //  如果len 的值等于1 证明删除完毕之后 当前页面已经没有数据了
+              q.pagenum = q.pagenum === 1 ? 1 : q.pagenum - 1
+            }
+            initTable()
+          }
+        })
+        layer.close(index)
+      }
+    )
+  })
 })
